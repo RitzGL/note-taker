@@ -26,8 +26,17 @@ app.get('/api/notes', (req, res)=>{
 app.get('*', (req, res) => res.sendFile(path.join(__dirname,'public/index.html')));
 
 
-app.post('/api/notes',()=>{
-
+app.post('/api/notes',(req, res, note)=>{
+    // read the json file to extract content
+    fs.readFile('./db/db.json','utf8',(err, data)=>{
+        if(err){
+            console.error(err);
+            return;
+        }
+        console.log(data);
+        let objectsFromJSON = JSON.parse(data);
+        console.log(objectsFromJSON);
+    })
 })
 
 app.delete('/api/notes', ()=>{
