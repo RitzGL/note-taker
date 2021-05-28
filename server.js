@@ -16,20 +16,15 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname,'public/index.html')
 // Direct user to the notes page
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname,'public/notes.html')));
 
+// send the JSON file for the page to render
+app.get('/api/notes', (req, res)=>{
+    res.sendFile(path.join(__dirname,'db/db.json'))
+})
+
+
 // Direct user to homepage if no path matches
 app.get('*', (req, res) => res.sendFile(path.join(__dirname,'public/index.html')));
 
-// send the JSON file for the page to render
-app.get('/api/notes', ()=>{
-    // fs.readFile('db/db.json','json',(err, data)=>{
-    //     if(err){
-    //         console.error(err);
-    //         return;
-    //     }
-    //     console.log(data);
-    //     res.send(data.json());
-    // })
-})
 
 app.post('/api/notes',()=>{
 
