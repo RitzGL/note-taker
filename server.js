@@ -4,6 +4,7 @@ const path = require('path');
 const PORT = 8080;
 const app = express();
 const fs = require('fs');
+let db = require('./db/db.json'); // importing literal db from path
 
 // Using the path of the 'public' directory
 app.use(express.static('./public'));
@@ -20,35 +21,63 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname,'public/index.html')
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname,'public/notes.html')));
 
 // send the JSON file for the page to render
-app.get('/api/notes', (req, res)=>{
-    res.sendFile(path.join(__dirname,'db/db.json'))
-})
+app.get('/api/notes', (req, res)=>res.json(db)
 
-app.post('/api/notes', async (req, res)=>{
-    const note = req.body;
+    // res.sendFile(path.join(__dirname,'db/db.json'))
+)
+
+
+
+// function writeNotes(notes){
+
+// }
+
+app.post('/api/notes',(req, res)=>{
     
-    note.id = null; // set id onto note element
-    const notes = await getAllNotes(); // read from file all notes to creat array
-    notes.push(note); // push the newly created note unto the array
-    await writeNotes(notes); // write to file the entire array to update 
-    res.json(note); // respond to frontend with the newly created note
+    let note = req.body;
+    console.log("this is the note inside POST", typeof note)    
 
-    console.log(note);
+    db.push(note); // this is updating the database array object
+
+    console.log(db)
+
+    // JSON.stringify(db) -> where db is the buffer we're writing from
+    // db being the filename we are writing to
+    fs.writeFile(db, JSON.stringify(db), (err) => { // updates db file
+        if(err) return console.error(err);
+        res.json(note); // this responds to the index.js
+    }) 
+    
+
+    // read from file all notes to creat array
+    
+    // const notes = await getAllNotes(); 
+    
+    // console.log(notes);
+    
+    // push the newly created note unto the array
+    
+    // notes.push(note); 
+
+    // write to file the entire array to update
+    // await writeNotes(notes);  
+    // respond to frontend with the newly created note
+    // res.json(note); 
+
+    // console.log(note);
     // read the json file to extract content
-    fs.readFile('./db/db.json','utf8',(err, data)=>{
-        if(err){
-            console.error(err);
-            return;
-        }
-        // console.log(data);
-        // let objectsFromJSON = JSON.parse(data);
-        // console.log(objectsFromJSON);
-        
-        // fs.writeFile('./db/db.json',)
-    })
+    
 
 
 })
+
+// function getAllNotes(){
+//     fs.readFile('./db/db.json', 'utf8', (err, data)=>{
+//         if (err) return console.error(err)
+//         console.log("this is the data inside getAllNotes", data)
+//         return data;
+//     })
+// }
 
 app.delete('/api/notes', ()=>{
 
